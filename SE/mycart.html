@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Randy & Vals - My Cart</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* --- Core Variables and Global Styles --- */
+        :root {
+            --primary-blue: #31488c;
+            --secondary-orange: #da6124;
+            --light-bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-dark: #333;
+            --text-light: #f5f7fa;
+            --border-radius-card: 15px;
+            --border-radius-button: 8px;
+            --shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+        }
+
+        /* --- Dashboard Layout --- */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--primary-blue);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-light);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .logo p {
+            font-size: 12px;
+            margin-top: 5px;
+            color: var(--secondary-orange);
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 10px;
+            border-radius: var(--border-radius-button);
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 16px;
+            transition: background-color 0.2s, color 0.2s;
+            border-radius: var(--border-radius-button);
+        }
+
+        .sidebar-nav a i {
+            margin-right: 15px;
+            font-size: 18px;
+        }
+
+        .sidebar-nav li.active {
+            background-color: var(--secondary-orange);
+        }
+
+        .sidebar-nav li.active a {
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .sidebar-nav a:hover:not(.sidebar-nav li.active a) {
+            background-color: #3f556d;
+        }
+
+        .sidebar-help {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #3f556d;
+            text-align: center;
+        }
+
+        .sidebar-help a {
+            color: var(--secondary-orange);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* Main Content and Navbar */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: var(--card-bg);
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h2 {
+            margin: 0;
+            color: var(--primary-blue);
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .nav-icons {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-icons .icon-button {
+            background: none;
+            border: none;
+            color: var(--primary-blue);
+            font-size: 20px;
+            margin-left: 15px;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+
+        .nav-icons .icon-button:hover {
+            color: var(--secondary-orange);
+        }
+
+        .dashboard-body {
+            padding: 30px;
+            flex-grow: 1;
+        }
+
+        /* --- My Cart Page Specific Styles --- */
+        
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* Cart list takes 2/3, summary takes 1/3 */
+            gap: 30px;
+        }
+
+        .cart-list-container {
+            /* Reuses card styling */
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius-card);
+            box-shadow: var(--shadow);
+            padding: 25px;
+        }
+
+        .cart-list-container h3 {
+            color: var(--primary-blue);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .cart-item-image {
+            width: 70px;
+            height: 70px;
+            background-color: #f0f0f0;
+            border-radius: var(--border-radius-button);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        
+        .cart-item-image i {
+            font-size: 30px;
+            color: var(--primary-blue);
+        }
+
+        .item-details {
+            flex-grow: 1;
+        }
+
+        .item-details h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .item-details p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-left: 20px;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius-button);
+            overflow: hidden;
+        }
+
+        .quantity-control button {
+            background-color: #f5f5f5;
+            border: none;
+            padding: 8px 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.1s;
+        }
+
+        .quantity-control button:hover {
+            background-color: #eee;
+        }
+
+        .quantity-control span {
+            padding: 8px 15px;
+            font-size: 15px;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .item-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--secondary-orange);
+            min-width: 100px;
+            text-align: right;
+        }
+        
+        .remove-button {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+            margin-left: 10px;
+        }
+        
+        /* Summary Section */
+        .cart-summary {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius-card);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            height: fit-content;
+        }
+
+        .cart-summary h3 {
+            color: var(--primary-blue);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        .summary-row.total {
+            border-top: 1px solid #ccc;
+            padding-top: 15px;
+            margin-top: 15px;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+        
+        .total span:last-child {
+            color: var(--secondary-orange);
+        }
+
+        .checkout-button {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--secondary-orange);
+            color: var(--primary-blue);
+            border: none;
+            border-radius: var(--border-radius-button);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        .checkout-button:hover {
+            background-color: #e67e22;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 70px;
+                padding: 15px 10px;
+            }
+            .logo h1, .logo p, .sidebar-nav span {
+                display: none;
+            }
+            .sidebar-nav a {
+                justify-content: center;
+                margin-bottom: 5px;
+                padding: 10px;
+            }
+            .sidebar-nav a i {
+                margin-right: 0;
+            }
+            .sidebar-help {
+                visibility: hidden;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .cart-layout {
+                grid-template-columns: 1fr; /* Stack layout on mobile */
+            }
+            .cart-item {
+                flex-wrap: wrap;
+            }
+            .item-details {
+                min-width: 100%;
+                margin-bottom: 10px;
+            }
+            .item-controls {
+                justify-content: space-between;
+                width: 100%;
+                margin-left: 0;
+            }
+            .item-price {
+                min-width: auto;
+                text-align: left;
+                order: 3; /* Move price below controls on mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>RANDY & VALS</h1>
+                <p>ELECTRICAL & GENERAL<br>MERCHANDISE</p>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
+                    <li><a href="products.html"><i class="fas fa-box"></i> <span>Products</span></a></li>
+                    <li class="active"><a href="#"><i class="fas fa-shopping-cart"></i> <span>My Cart</span></a></li>
+                    <li><a href="payout.html"><i class="fas fa-credit-card"></i> <span>Payout</span></a></li>
+                    <li><a href="profile.html"><i class="fas fa-user"></i> <span>Profile</span></a></li>
+                    <li><a href="settings.html"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                    <li><a href="logout.html"><i class="fas fa-sign-out-alt"></i> <span>Log Out</span></a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-help">
+                <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="navbar">
+                <h2>Your Shopping Cart</h2>
+                
+            </header>
+
+            <section class="dashboard-body cart-page">
+                <div class="cart-layout">
+                    
+                    <div class="cart-list-container">
+                        <h3>Items in Cart</h3>
+                        
+                        <div class="cart-item" data-price="850">
+                            <div class="cart-item-image"><i class="fas fa-tools"></i></div>
+                            <div class="item-details">
+                                <h4>Heavy Duty Wire Cutter</h4>
+                                <p>SKU: TC-850</p>
+                            </div>
+                            <div class="item-controls">
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus-btn">-</button>
+                                    <span class="quantity-value" data-quantity="1">1</span>
+                                    <button class="quantity-btn plus-btn">+</button>
+                                </div>
+                                <span class="item-price">₱ 850.00</span>
+                                <button class="remove-button"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="cart-item" data-price="1500">
+                            <div class="cart-item-image"><i class="fas fa-lightbulb"></i></div>
+                            <div class="item-details">
+                                <h4>100W LED Flood Light</h4>
+                                <p>SKU: LT-1500</p>
+                            </div>
+                            <div class="item-controls">
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus-btn">-</button>
+                                    <span class="quantity-value" data-quantity="2">2</span>
+                                    <button class="quantity-btn plus-btn">+</button>
+                                </div>
+                                <span class="item-price">₱ 3,000.00</span>
+                                <button class="remove-button"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="cart-item" data-price="120">
+                            <div class="cart-item-image"><i class="fas fa-plug"></i></div>
+                            <div class="item-details">
+                                <h4>Universal Outlet Plate</h4>
+                                <p>SKU: EL-120</p>
+                            </div>
+                            <div class="item-controls">
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus-btn">-</button>
+                                    <span class="quantity-value" data-quantity="5">5</span>
+                                    <button class="quantity-btn plus-btn">+</button>
+                                </div>
+                                <span class="item-price">₱ 600.00</span>
+                                <button class="remove-button"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cart-summary">
+                        <h3>Order Summary</h3>
+                        
+                        <div class="summary-row">
+                            <span>Subtotal (8 items)</span>
+                            <span id="subtotal">₱ 4,450.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Shipping Fee</span>
+                            <span id="shipping">₱ 150.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>VAT (12%)</span>
+                            <span id="tax">₱ 534.00</span>
+                        </div>
+                        
+                        <div class="summary-row total">
+                            <span>Order Total</span>
+                            <span id="grand-total">₱ 5,134.00</span>
+                        </div>
+                        
+                        <button class="checkout-button">Proceed to Checkout</button>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Utility function to format currency
+            const formatCurrency = (amount) => {
+                return '₱ ' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            };
+
+            // Calculate and update the totals
+            const updateCartTotals = () => {
+                let subtotal = 0;
+                document.querySelectorAll('.cart-item').forEach(item => {
+                    const pricePerUnit = parseFloat(item.getAttribute('data-price'));
+                    const quantity = parseInt(item.querySelector('.quantity-value').getAttribute('data-quantity'));
+                    const itemTotal = pricePerUnit * quantity;
+                    
+                    item.querySelector('.item-price').textContent = formatCurrency(itemTotal);
+                    subtotal += itemTotal;
+                });
+                
+                const shipping = 150; 
+                const taxRate = 0.12;
+                const tax = subtotal * taxRate;
+                const grandTotal = subtotal + shipping + tax;
+
+                document.getElementById('subtotal').textContent = formatCurrency(subtotal);
+                document.getElementById('shipping').textContent = formatCurrency(shipping);
+                document.getElementById('tax').textContent = formatCurrency(tax);
+                document.getElementById('grand-total').textContent = formatCurrency(grandTotal);
+                
+                // Update total item count in the header
+                const totalItems = document.querySelectorAll('.quantity-value').length;
+                document.querySelector('.cart-list-container h3').textContent = `${totalItems} Items in Cart`;
+            };
+
+            // Quantity Control Handlers
+            document.querySelectorAll('.quantity-control button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const itemContainer = this.closest('.cart-item');
+                    const quantityElement = itemContainer.querySelector('.quantity-value');
+                    let quantity = parseInt(quantityElement.getAttribute('data-quantity'));
+                    
+                    if (this.classList.contains('plus-btn')) {
+                        quantity++;
+                    } else if (this.classList.contains('minus-btn') && quantity > 1) {
+                        quantity--;
+                    } else if (this.classList.contains('minus-btn') && quantity === 1) {
+                        // Optionally remove the item if quantity reaches zero
+                        if(confirm('Remove this item from the cart?')) {
+                            itemContainer.remove();
+                        }
+                    }
+
+                    quantityElement.setAttribute('data-quantity', quantity);
+                    quantityElement.textContent = quantity;
+                    updateCartTotals();
+                });
+            });
+            
+            // Remove Item Handler
+            document.querySelectorAll('.remove-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    if(confirm('Are you sure you want to remove this item?')) {
+                        this.closest('.cart-item').remove();
+                        updateCartTotals();
+                    }
+                });
+            });
+
+            // Initial calculation (Run once on load)
+            updateCartTotals();
+
+            // 4. Sidebar active link functionality (general dashboard logic)
+            const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    sidebarLinks.forEach(item => item.parentElement.classList.remove('active'));
+                    this.parentElement.classList.add('active');
+                });
+            });
+
+            // 5. Checkout button interaction
+            document.querySelector('.checkout-button').addEventListener('click', function() {
+                alert('Redirecting to Payment Gateway! Total: ' + document.getElementById('grand-total').textContent);
+            });
+            
+            // 6. Navbar interaction
+            const navIcons = document.querySelectorAll('.nav-icons .icon-button');
+            navIcons.forEach(icon => {
+                icon.addEventListener('click', function() {
+                    alert(`Clicked ${this.querySelector('i').className.replace('fas fa-', '')}!`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

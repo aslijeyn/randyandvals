@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Randy & Vals - Checkout</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* --- Core Variables and Global Styles --- */
+        :root {
+            --primary-blue: #31488c;
+            --secondary-orange: #da6124;
+            --light-bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-dark: #333;
+            --text-light: #f5f7fa;
+            --border-radius-card: 15px;
+            --border-radius-button: 8px;
+            --shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            --success-green: #2ecc71;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+        }
+
+        /* --- Dashboard Layout --- */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--primary-blue);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-light);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .logo p {
+            font-size: 12px;
+            margin-top: 5px;
+            color: var(--secondary-orange);
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 10px;
+            border-radius: var(--border-radius-button);
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 16px;
+            transition: background-color 0.2s, color 0.2s;
+            border-radius: var(--border-radius-button);
+        }
+
+        .sidebar-nav a i {
+            margin-right: 15px;
+            font-size: 18px;
+        }
+
+        .sidebar-nav li.active {
+            background-color: var(--secondary-orange);
+        }
+
+        .sidebar-nav li.active a {
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .sidebar-nav a:hover:not(.sidebar-nav li.active a) {
+            background-color: #3f556d;
+        }
+
+        .sidebar-help {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #3f556d;
+            text-align: center;
+        }
+
+        .sidebar-help a {
+            color: var(--secondary-orange);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* Main Content and Navbar */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: var(--card-bg);
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h2 {
+            margin: 0;
+            color: var(--primary-blue);
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .nav-icons {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-icons .icon-button {
+            background: none;
+            border: none;
+            color: var(--primary-blue);
+            font-size: 20px;
+            margin-left: 15px;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+
+        .nav-icons .icon-button:hover {
+            color: var(--secondary-orange);
+        }
+
+        .dashboard-body {
+            padding: 30px;
+            flex-grow: 1;
+        }
+
+        /* --- Checkout Page Specific Styles --- */
+
+        .checkout-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* Form takes 2/3, summary takes 1/3 */
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .checkout-steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .checkout-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius-card);
+            box-shadow: var(--shadow);
+            padding: 30px;
+        }
+
+        .checkout-card h3 {
+            color: var(--primary-blue);
+            font-size: 18px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkout-card h3 i {
+            margin-right: 10px;
+            color: var(--secondary-orange);
+        }
+
+        /* Form Styling */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group-full {
+            grid-column: 1 / -1;
+        }
+
+        .checkout-card label {
+            display: block;
+            font-size: 14px;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .checkout-card input, .checkout-card select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius-button);
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+
+        .checkout-card input:focus, .checkout-card select:focus {
+            border-color: var(--secondary-orange);
+            outline: none;
+        }
+
+        /* Payment Options */
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .payment-option {
+            border: 2px solid #ddd;
+            border-radius: var(--border-radius-button);
+            padding: 15px;
+            cursor: pointer;
+            transition: border-color 0.2s, background-color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .payment-option:hover, .payment-option.selected {
+            border-color: var(--secondary-orange);
+            background-color: #fffaf2;
+        }
+
+        .payment-option i {
+            font-size: 24px;
+            margin-right: 15px;
+            color: var(--primary-blue);
+        }
+        
+        .payment-option.selected i {
+            color: var(--secondary-orange);
+        }
+
+        .payment-info h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .payment-info p {
+            margin: 0;
+            font-size: 13px;
+            color: #888;
+        }
+        
+        /* Order Summary */
+        .order-summary-container {
+            height: fit-content;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .summary-row.total {
+            border-top: 2px solid var(--primary-blue);
+            padding-top: 15px;
+            margin-top: 15px;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+        
+        .total span:last-child {
+            color: var(--secondary-orange);
+        }
+        
+        .place-order-button {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--success-green);
+            color: var(--card-bg);
+            border: none;
+            border-radius: var(--border-radius-button);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 20px;
+        }
+
+        .place-order-button:hover {
+            background-color: #27ae60;
+        }
+
+
+        /* Responsive Adjustments */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 70px;
+                padding: 15px 10px;
+            }
+            .logo h1, .logo p, .sidebar-nav span {
+                display: none;
+            }
+            .sidebar-nav a {
+                justify-content: center;
+                margin-bottom: 5px;
+                padding: 10px;
+            }
+            .sidebar-nav a i {
+                margin-right: 0;
+            }
+            .sidebar-help {
+                visibility: hidden;
+            }
+            .checkout-layout {
+                grid-template-columns: 1fr; /* Stack layout on tablets */
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-body {
+                padding: 15px;
+            }
+            .form-grid {
+                grid-template-columns: 1fr; /* Single column for forms on mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>RANDY & VALS</h1>
+                <p>ELECTRICAL & GENERAL<br>MERCHANDISE</p>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
+                    <li><a href="products.html"><i class="fas fa-box"></i> <span>Products</span></a></li>
+                    <li><a href="mycart.html"><i class="fas fa-shopping-cart"></i> <span>My Cart</span></a></li>
+                    <li><a href="payout.html"><i class="fas fa-credit-card"></i> <span>Payout</span></a></li>
+                    <li><a href="profile.html"><i class="fas fa-user"></i> <span>Profile</span></a></li>
+                    <li><a href="settings.html"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                    <li><a href="logout.html"><i class="fas fa-sign-out-alt"></i> <span>Log Out</span></a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-help">
+                <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="navbar">
+                <h2>Secure Checkout</h2>
+                <div class="nav-icons">
+                    <button class="icon-button"><i class="fas fa-bell"></i></button>
+                    <button class="icon-button"><i class="fas fa-search"></i></button>
+                    <button class="icon-button"><i class="fas fa-bars"></i></button>
+                </div>
+            </header>
+
+            <section class="dashboard-body checkout-page">
+                <form id="checkout-form" class="checkout-layout">
+                    
+                    <div class="checkout-steps-container">
+                        
+                        <div class="checkout-card">
+                            <h3><i class="fas fa-truck"></i> 1. Shipping Information</h3>
+                            <div class="form-grid">
+                                
+                                <div class="form-group-full">
+                                    <label for="full-name">Full Name</label>
+                                    <input type="text" id="full-name" value="Juan Dela Cruz" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" id="email" value="juan@example.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" id="phone" value="+639171234567" required>
+                                </div>
+                                
+                                <div class="form-group-full">
+                                    <label for="address">Street Address</label>
+                                    <input type="text" id="address" value="23 Rizal Avenue" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="city">City</label>
+                                    <input type="text" id="city" value="Manila" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="zip">Zip/Postal Code</label>
+                                    <input type="text" id="zip" value="1000" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checkout-card">
+                            <h3><i class="fas fa-credit-card"></i> 2. Payment Method</h3>
+                            <div class="payment-options">
+                                
+                                <div class="payment-option selected" data-method="cod">
+                                    <i class="fas fa-handshake"></i>
+                                    <div class="payment-info">
+                                        <h4>Cash on Delivery (COD)</h4>
+                                        <p>Pay upon delivery of the goods.</p>
+                                    </div>
+                                </div>
+
+                                <div class="payment-option" data-method="gcash">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    <div class="payment-info">
+                                        <h4>GCash/PayMaya</h4>
+                                        <p>Pay securely via mobile wallet.</p>
+                                    </div>
+                                </div>
+
+                                <div class="payment-option" data-method="creditcard">
+                                    <i class="fas fa-credit-card"></i>
+                                    <div class="payment-info">
+                                        <h4>Credit/Debit Card</h4>
+                                        <p>Visa, Mastercard, JCB</p>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <div class="order-summary-container checkout-card">
+                        <h3><i class="fas fa-receipt"></i> 3. Order Summary</h3>
+                        
+                        <div class="summary-row">
+                            <span>Wire Cutter (x1)</span>
+                            <span>₱ 850.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Flood Light (x2)</span>
+                            <span>₱ 3,000.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Outlet Plate (x5)</span>
+                            <span>₱ 600.00</span>
+                        </div>
+                        <div class="summary-row" style="margin-top: 15px;">
+                            <span>Subtotal (8 items)</span>
+                            <span>₱ 4,450.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Shipping Fee</span>
+                            <span>₱ 150.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>VAT (12%)</span>
+                            <span>₱ 534.00</span>
+                        </div>
+                        
+                        <div class="summary-row total">
+                            <span>Grand Total</span>
+                            <span id="grand-total-display">₱ 5,134.00</span>
+                        </div>
+                        
+                        <button type="submit" class="place-order-button">Place Order (₱ 5,134.00)</button>
+                    </div>
+
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Payment Method Selector
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            let selectedMethod = 'cod'; // Default selected method
+
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove 'selected' class from all options
+                    paymentOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Add 'selected' class to the clicked option
+                    this.classList.add('selected');
+                    selectedMethod = this.getAttribute('data-method');
+                    
+                    console.log('Payment method selected:', selectedMethod);
+                });
+            });
+
+            // 2. Form Submission Handler
+            const checkoutForm = document.getElementById('checkout-form');
+            if (checkoutForm) {
+                checkoutForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    
+                    // Get data from form fields (simplified for demo)
+                    const fullName = document.getElementById('full-name').value;
+                    const address = document.getElementById('address').value;
+                    const grandTotal = document.getElementById('grand-total-display').textContent;
+
+                    // Show confirmation
+                    if (confirm(`Confirm Order:\n\nShip to: ${fullName} at ${address}\nPayment: ${selectedMethod}\nTotal: ${grandTotal}\n\nProceed?`)) {
+                        
+                        // Simulate order placement
+                        alert('Order Placed Successfully! Thank you for shopping with Randy & Vals.');
+                        
+                        // In a real app, you would redirect to an order confirmation page.
+                        // For this demo, we'll redirect back to the dashboard.
+                        window.location.href = 'index.html'; 
+                    }
+                });
+            }
+
+            // 3. Sidebar active link functionality (general dashboard logic)
+            const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    // event.preventDefault(); // Uncomment if you want to stop navigation for hash links
+                    sidebarLinks.forEach(item => item.parentElement.classList.remove('active'));
+                    this.parentElement.classList.add('active');
+                });
+            });
+            
+            // 4. Navbar interaction
+            const navIcons = document.querySelectorAll('.nav-icons .icon-button');
+            navIcons.forEach(icon => {
+                icon.addEventListener('click', function() {
+                    alert(`Clicked ${this.querySelector('i').className.replace('fas fa-', '')}!`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
