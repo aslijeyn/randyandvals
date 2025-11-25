@@ -183,7 +183,7 @@
     // VALID PRODUCT IDs (para tanggalin ang mga wala dito)
     const validProductIDs = [
         "P001","P002","P003","P004","P005",
-        "P006","P007","P008","P009","P010"
+        "P006","P007","P008","P009","P010", "P011"
     ];
 
     function getCart() {
@@ -195,7 +195,7 @@
         localStorage.setItem("shoppingCart", JSON.stringify(cart));
     }
 
-    // 🔥 AUTO-CLEAN NG LUMANG / INVALID ITEMS
+    //  AUTO-CLEAN NG LUMANG / INVALID ITEMS
     function cleanCart() {
         let cart = getCart();
         let cleaned = cart.filter(item => validProductIDs.includes(item.id));
